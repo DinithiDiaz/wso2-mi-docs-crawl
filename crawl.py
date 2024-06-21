@@ -96,7 +96,6 @@ def find_redirects(url, target_redirect, base_url, csv_writer, max_depth=3, dept
             continue
 
         full_url = join_url(url, link['href'])
-        print("full url:", url," | ", link['href']," | ", full_url)
 
         if is_same_domain(full_url, base_url):
             if not is_valid_domain(full_url):
