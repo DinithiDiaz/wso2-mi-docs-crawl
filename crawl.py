@@ -8,7 +8,7 @@ import logging
 logging.basicConfig(filename='crawling.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 visited_urls = set()
-checked_urls = set()
+checked_correct_urls = set()
 
 headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
@@ -40,11 +40,10 @@ def is_valid_domain(url):
 
 def check_url(url, target_redirect, csv_writer, parent_url=None):
 
-    if url in checked_urls:
+    if url in checked_correct_urls:
         return
 
     logging.info(f"Checking: {url}")
-    checked_urls.add(url)
 
     try:
         link_response = requests.get(url, headers=headers, allow_redirects=True)
@@ -68,17 +67,19 @@ def check_url(url, target_redirect, csv_writer, parent_url=None):
         csv_writer.writerow([url, None, parent_url, f"Failed to fetch {url} and is found in {parent_url}: {e}"])
         return False  # Error found
 
+    checked_correct_urls.add(url)
     return True  # No error found
 
 def find_redirects(url, target_redirect, base_url, csv_writer, max_depth=300, depth=0):
     if depth > max_depth or url in visited_urls:
         return
     
+    visited_urls.add(url)
+    
     if is_file_path(url):
         logging.info(f"Skipped Crawling: {url} is a file path")
         return
 
-    visited_urls.add(url)
     logging.info(f"Crawling: {url}")
     print(f"Crawling: {url}")
 
