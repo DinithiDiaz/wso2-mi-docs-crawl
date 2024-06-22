@@ -8,6 +8,7 @@ import logging
 logging.basicConfig(filename='crawling.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 visited_urls = set()
+checked_urls = set()
 
 headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
@@ -34,7 +35,13 @@ def is_valid_domain(url):
     return any(url.startswith(domain) for domain in VALID_DOMAINS)
 
 def check_url(url, target_redirect, csv_writer, parent_url=None):
+
+    if url in checked_urls:
+        return
+
     logging.info(f"Checking: {url}")
+    checked_urls.add(url)
+
     try:
         link_response = requests.get(url, headers=headers, allow_redirects=True)
         if link_response.status_code in (301, 302) and link_response.headers.get('Location') == target_redirect:
