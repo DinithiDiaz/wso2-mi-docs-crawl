@@ -19,6 +19,13 @@ VALID_DOMAINS = [
     "https://apim.docs.wso2.com/en/4.3.0"
 ]
 
+def remove_fragment(url):
+    # Parse the URL
+    parsed_url = urlparse(url)
+    # Rebuild the URL without the fragment
+    url_without_fragment = urlunparse(parsed_url._replace(fragment=''))
+    return url_without_fragment
+
 def join_url(base, link):
     parsed_url = urlparse(base)
     
@@ -111,6 +118,7 @@ def find_redirects(url, target_redirect, base_url, csv_writer, max_depth=300, de
             continue
 
         full_url = join_url(url, link['href'])
+        full_url = remove_fragment(full_url) #url with fragments are identical to url without it 
 
         if is_same_domain(full_url, base_url):
             if not is_valid_domain(full_url):
