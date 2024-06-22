@@ -34,6 +34,7 @@ def is_valid_domain(url):
     return any(url.startswith(domain) for domain in VALID_DOMAINS)
 
 def check_url(url, target_redirect, csv_writer, parent_url=None):
+    logging.info(f"Checking: {url}")
     try:
         link_response = requests.get(url, headers=headers, allow_redirects=True)
         if link_response.status_code in (301, 302) and link_response.headers.get('Location') == target_redirect:
