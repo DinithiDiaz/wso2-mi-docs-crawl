@@ -8,7 +8,6 @@ import logging
 logging.basicConfig(filename='crawling.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 visited_urls = set()
-redirect_map = {}
 
 headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
@@ -36,20 +35,19 @@ def is_valid_domain(url):
 
 def check_url(url, target_redirect, csv_writer, parent_url=None):
     try:
-        link_response = requests.get(url, headers=headers, allow_redirects=False)
+        link_response = requests.get(url, headers=headers, allow_redirects=True)
         if link_response.status_code in (301, 302) and link_response.headers.get('Location') == target_redirect:
-            redirect_map[url] = (link_response.headers.get('Location'), parent_url)
             visited_urls.add(url)
             logging.error(f"{url} redirects to {link_response.headers.get('Location')} and is found on {parent_url}")
             csv_writer.writerow([url, link_response.headers.get('Location'), parent_url, '301/302 redirect to target URL'])
             return False  # Error found
         elif link_response.url == target_redirect:
-            redirect_map[url] = (link_response.url, parent_url)
             visited_urls.add(url)
             logging.error(f"{url} redirects to {link_response.url} and is found on {parent_url}")
             csv_writer.writerow([url, link_response.url, parent_url, 'Redirect to target URL'])
             return False  # Error found
         elif link_response.status_code == 404:
+            visited_urls.add(url)
             logging.error(f"{url} returns 404 error and is found on {parent_url}")
             csv_writer.writerow([url, None, parent_url, '404 Not Found'])
             return False  # Error found
@@ -60,7 +58,7 @@ def check_url(url, target_redirect, csv_writer, parent_url=None):
 
     return True  # No error found
 
-def find_redirects(url, target_redirect, base_url, csv_writer, max_depth=3, depth=0):
+def find_redirects(url, target_redirect, base_url, csv_writer, max_depth=300, depth=0):
     if depth > max_depth or url in visited_urls:
         return
 
@@ -118,3 +116,6 @@ if __name__ == "__main__":
         csv_writer = csv.writer(file)
         csv_writer.writerow(['Source URL', 'Redirected URL', 'Containing Page', 'Description'])
         crawl_website(base_url, target_redirect, csv_writer)
+
+    print("Crawling completed!!!")
+    logging.info("Crawling compleeted!!!")
