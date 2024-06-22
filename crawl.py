@@ -28,6 +28,10 @@ def join_url(base, link):
     
     return urljoin(base, link)
 
+def is_file_path(url):
+    parsed_url = urlparse(url)
+    return bool(parsed_url.path.split('/')[-1].count('.'))
+
 def is_same_domain(url1, url2):
     return urlparse(url1).netloc == urlparse(url2).netloc
 
@@ -37,6 +41,10 @@ def is_valid_domain(url):
 def check_url(url, target_redirect, csv_writer, parent_url=None):
 
     if url in checked_urls:
+        return
+    
+    if is_file_path(url):
+        logging.info(f"Skipped Crawling: {url} is a file path")
         return
 
     logging.info(f"Checking: {url}")
