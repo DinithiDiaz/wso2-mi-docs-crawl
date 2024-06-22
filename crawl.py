@@ -42,10 +42,6 @@ def check_url(url, target_redirect, csv_writer, parent_url=None):
 
     if url in checked_urls:
         return
-    
-    if is_file_path(url):
-        logging.info(f"Skipped Crawling: {url} is a file path")
-        return
 
     logging.info(f"Checking: {url}")
     checked_urls.add(url)
@@ -76,6 +72,10 @@ def check_url(url, target_redirect, csv_writer, parent_url=None):
 
 def find_redirects(url, target_redirect, base_url, csv_writer, max_depth=300, depth=0):
     if depth > max_depth or url in visited_urls:
+        return
+    
+    if is_file_path(url):
+        logging.info(f"Skipped Crawling: {url} is a file path")
         return
 
     visited_urls.add(url)
