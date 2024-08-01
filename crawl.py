@@ -15,8 +15,8 @@ headers = {
 }
 
 VALID_DOMAINS = [
-    "https://apim.docs.wso2.com/en/latest",
-    "https://apim.docs.wso2.com/en/4.3.0"
+    "https://mi.docs.wso2.com/en/latest",
+    "https://mi.docs.wso2.com/en/4.3.0"
 ]
 
 def remove_fragment(url):
@@ -134,8 +134,8 @@ def crawl_website(base_url, target_redirect, csv_writer):
     find_redirects(base_url, target_redirect, base_url, csv_writer)
 
 if __name__ == "__main__":
-    base_url = "https://apim.docs.wso2.com/en/latest/"  # Replace with the base URL of the website you want to crawl
-    target_redirect = "https://apim.docs.wso2.com/en/latest/page-not-found/"  # Replace with the URL to check for redirects
+    base_url = "https://mi.docs.wso2.com/en/latest/"  # Replace with the base URL of the website you want to crawl
+    target_redirect = "https://mi.docs.wso2.com/en/latest/page-not-found/"  # Replace with the URL to check for redirects
 
     with open('redirects.csv', mode='w', newline='', encoding='utf-8') as file:
         csv_writer = csv.writer(file)
