@@ -1,1 +1,1 @@
-# wso2-apim-docs-crawl
+# wso2-mi-docs-crawl
